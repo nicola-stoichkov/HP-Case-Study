@@ -27,3 +27,13 @@ Downloading a Google Sheet as `.xlsx` converts every Sheets-native array formula
 ## 3. A cosmetic non-issue, noted so it isn't mistaken for a bug
 
 `A1` in the workbook reads `FY26 Realigned` (capital R). The data itself uses `FY26 realigned` (lowercase r). `SUMIFS` text matching is case-insensitive in both Sheets and Excel, so every value cell still matches correctly, confirmed by the spot-checks above. Left as-is since it doesn't affect the numbers, but worth knowing if a stricter, case-sensitive tool is ever used against this same pattern.
+
+## 4. The `yoy` tab (C2)
+
+Independently computed y/y growth, reconciled against HP's own published percentage, for all eight business units (Corporate Investments excluded, since HP itself discloses it as "NM", not meaningful) at Q3 FY26 vs Q3 FY25. Verified 2026-08-29:
+
+- `Current value` and `Prior value` are both `SUMIFS`, same four-criteria pattern as `matrix`, one pulling the named quarter and the other pulling the prior-year quarter.
+- `Prior year qtr` (column D) is typed in directly rather than derived with a formula. That's a deliberate simplification for a tab scoped to one fixed quarter; it just means the column won't auto-update if `B` is later changed to a different quarter.
+- `HP Published` (column G) is transcribed by hand from HP's Q3 FY26 press release narrative, the same source already verified live against the page earlier in this project.
+- All eight rows flag `OK`. Largest gap is Commercial PS at 0.19 points (computed 21.93% against HP's rounded 22%), well inside the tolerance, consistent with HP rounding narrative growth to the nearest whole percent.
+- `Printing` (row 8) reads 3,912 for the current value and 4,002 for the prior year, matching `matrix` and the source exactly. `Total segment` (row 9) reads 15,679, also matching.
