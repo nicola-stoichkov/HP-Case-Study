@@ -37,7 +37,7 @@ The reclassification grows over time, from nothing in Q1 FY24 to 19 million by Q
 
 ## 2. Validation approach
 
-`validate.py` runs seven assertions. The first five are internal consistency:
+`validate.py` runs eight assertions. The first five are internal consistency:
 
 1. Supplies + Commercial Printing + Consumer Printing equals reported Printing.
 2. Personal Systems + Printing + Corporate Investments equals reported total segment.
@@ -45,9 +45,9 @@ The reclassification grows over time, from nothing in Q1 FY24 to 19 million by Q
 4. Computed restatement deltas equal HP's own published CHANGE column.
 5. Total segment revenue is unchanged across the two bases.
 
-Checks 6 and 7 are described in section 7 below. Of the seven, the ones that carry real weight are 4, 6 and 7, because each tests the data against something *outside itself*: HP's own published arithmetic, a second disclosure of the same quantity, and a separately sourced dataset respectively. Checks 1 to 3 would all pass happily on a consistently mistyped dataset.
+Checks 6, 7 and 8 are described in sections 7 and 8 below. Of the eight, the ones that carry real weight are 4, 6, 7 and 8, because each tests the data against something *outside itself*: HP's own published arithmetic, a second disclosure of the same quantity, a separately sourced dataset, and narrative prose against a table, respectively. Checks 1 to 3 would all pass happily on a consistently mistyped dataset.
 
-All checks currently pass on 222 segment rows and 33 regional rows.
+All checks currently pass on 253 segment rows and 39 regional rows.
 
 ---
 
@@ -106,10 +106,30 @@ The second one is the more useful lesson: the bug was not the parser, it was a v
 
 ## 7. Validation checks now in place
 
-`analysis/validate.py` runs seven, and the last two are new:
+`analysis/validate.py` runs eight, and the last three are new:
 
 6. **Revenue times operating margin must reproduce reported earnings before taxes.** Two independent disclosures of the same thing, so they have to agree. They never agree exactly, because margin is published rounded to one decimal, meaning a printed 18.1% is really anything in [18.05, 18.15). The tolerance is therefore `revenue * 0.05%`, which **scales with revenue**. A fixed threshold would be wrong in both directions: it would wrongly fail Personal Systems, where large revenue produces a large absolute rounding error, and wrongly pass small business units where a genuine error could hide beneath it. 12 reconciliations pass.
 
 7. **Cross-source reconciliation.** Regional revenue comes from the SEC filings, segment revenue from the press releases. Independent transcriptions of the same company, so the three regions must reconcile to total segment net revenue, differing only by HP's small "Other" line of 0 to 2 million. 11 quarters pass.
 
-Check 7 is the most valuable of the seven, because it is the only one that tests two separately sourced datasets against each other rather than testing one dataset against itself.
+8. **Narrative growth against tabled revenue.** The nominal y/y percent HP states in prose must match what the net_revenue table cells themselves imply, within HP's own one-percent rounding. Described fully in section 8. 6 reconciliations pass.
+
+Check 7 is the most valuable of the eight, because it is the only one that tests two separately sourced datasets against each other rather than testing one dataset against itself.
+
+---
+
+## 8. Narrative-only figures: constant currency and hardware units
+
+Two metrics exist only in each release's prose ("Fiscal 2026 [quarter] segment results"), never in a table: constant-currency y/y growth and hardware unit y/y growth. Added by `analysis/build_dataset.py` (`CC_GROWTH`, `UNITS_GROWTH`, `YOY_NOMINAL`) for the three FY26 quarters, since narrative coverage only extends to whichever quarter each release is itself reporting.
+
+**Two things preserved rather than smoothed over in transcription:**
+
+- HP prints "flat" for some quarters instead of a number (Printing nominal growth, Q2 FY26; Supplies constant currency, Q2 FY26). Recorded as `0`, since that is what "flat" means at HP's one-percent rounding, but it is HP's word choice, not a precise reading. Noted here so `0` in those two cells is never mistaken for a sharper measurement than the source actually gives.
+- Q1 FY26 does not disclose Consumer Printing and Commercial Printing units separately ("both reflecting similar declines"). Those cells are absent from `UNITS_GROWTH`, not filled with a guess. Absence means not disclosed.
+
+**Check 8** reconciles the transcribed nominal y/y figures against what the tabled `net_revenue` rows themselves imply, the same logic as check 6 but between narrative and table rather than between margin and profit. 6 reconciliations pass within a 0.5 point band, matching HP's own one-percent rounding.
+
+**What the two derived proxies show, verified against the data 2026-08-29:**
+
+- **FX tailwind, growing across FY26.** Nominal growth minus constant-currency growth: Printing +0.8pp (Q1) to +2.0pp (Q2) to +1.8pp (Q3). Consistent with EMEA and APJ revenue growth outpacing Americas across the same quarters (see EMEA y/y in section 6's context). A weakening dollar is flattering HP's reported growth, and it is helping Printing more than it would matter to a segment growing faster in USD terms already.
+- **Consumer Printing ASP.** Q3 FY26: revenue -1.8%, units -9.0%, implying average selling price up roughly 7 points. This is the single most role-relevant number in the dataset for a Home Print category role: volume is falling faster than revenue, meaning HP is pushing price or mix, not chasing unit share.

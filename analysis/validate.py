@@ -12,6 +12,7 @@ rows = list(csv.DictReader(open("../data/processed/segment_data.csv")))
 rev = defaultdict(dict)
 marg = defaultdict(dict)
 ebt = defaultdict(dict)
+yoy_nominal = defaultdict(dict)
 for r in rows:
     k = (r["fiscal_quarter"], r["reporting_basis"])
     if r["metric"] == "net_revenue":
@@ -20,6 +21,8 @@ for r in rows:
         marg[k][r["business_unit"]] = float(r["value"])
     elif r["metric"] == "earnings_before_taxes":
         ebt[k][r["business_unit"]] = int(r["value"])
+    elif r["metric"] == "yoy_growth_pct":
+        yoy_nominal[r["fiscal_quarter"]][r["business_unit"]] = float(r["value"])
 
 failures = []
 
@@ -113,6 +116,28 @@ for q, v in reg.items():
             f"total {total_segment} for {q}")
     checks_7 += 1
 
+# 8. The nominal y/y growth transcribed from press release narrative prose
+#    must match what the tabled net_revenue figures themselves imply. These
+#    are two different places in the same release describing the same fact
+#    (a headline sentence vs. a table), so like check 6 this is looking for
+#    internal agreement within one document rather than across two documents.
+#    HP rounds narrative growth to the nearest percent, hence the 0.5pp band.
+checks_8 = 0
+for q, units in yoy_nominal.items():
+    year = int(q.split("FY")[1])
+    prior_q = q.split(" ")[0] + f" FY{year - 1}"
+    for unit, published in units.items():
+        cur = rev.get((q, "FY26 realigned"), {}).get(unit)
+        pri = rev.get((prior_q, "FY26 realigned"), {}).get(unit)
+        if cur is None or pri is None:
+            continue
+        computed = (cur / pri - 1) * 100
+        if abs(computed - published) > 0.5:
+            failures.append(
+                f"Narrative y/y {published}% vs net_revenue-implied "
+                f"{computed:.2f}% for {unit} {q}")
+        checks_8 += 1
+
 if failures:
     print(f"{len(failures)} FAILURES")
     for f in failures:
@@ -122,3 +147,4 @@ print(f"All checks passed across {len(rev)} quarter/basis combinations, "
       f"{len(rows)} segment rows and {len(regional)} regional rows.")
 print(f"  check 6: {checks_6} implied-profit reconciliations within rounding tolerance")
 print(f"  check 7: {checks_7} quarters where regional and segment sources reconcile")
+print(f"  check 8: {checks_8} narrative y/y figures reconciled against tabled net_revenue")

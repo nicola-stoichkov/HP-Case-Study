@@ -3,9 +3,12 @@
 Build the HP segment dataset in long format from figures transcribed from
 HP Inc.'s quarterly press releases.
 
-Every figure below was read from the SEGMENT/BUSINESS UNIT INFORMATION tables
-in the two press releases named in SOURCES. Nothing is estimated or derived
-except the y/y and share metrics, which are computed and flagged as computed.
+Most figures below were read from the SEGMENT/BUSINESS UNIT INFORMATION
+tables. Constant-currency growth and hardware unit growth (CC_GROWTH,
+UNITS_GROWTH, YOY_NOMINAL) come instead from the narrative prose in each
+release, since HP never tables those figures. Nothing here is estimated;
+everything is either a table cell or a number printed in running text,
+and each block of constants says which.
 
 Note on a source quirk: HP's own restatement tables label the Q2 column
 "Apr 31" in both the FY24 and FY25 blocks. April has 30 days. Treated as
@@ -20,6 +23,7 @@ PR_Q3FY26 = "https://investor.hp.com/news-events/news/news-details/2026/HP-Inc--
 # investor.hp.com URL is HP's own mirror of the identical release; the figures
 # transcribed below are unchanged, only the citation improved.
 PR_Q1FY26 = "https://investor.hp.com/news-events/news/news-details/2026/HP-Inc--Reports-Fiscal-2026-First-Quarter-Results/default.aspx"
+PR_Q2FY26 = "https://investor.hp.com/news-events/news/news-details/2026/HP-Inc--Reports-Fiscal-2026-Second-Quarter-Results/default.aspx"
 
 QUARTER_END = {
     "Q1 FY24": "2024-01-31", "Q2 FY24": "2024-04-30",
@@ -139,6 +143,61 @@ EBT_FY26 = {
 }
 
 # ---------------------------------------------------------------------------
+# CONSTANT-CURRENCY Y/Y GROWTH and HARDWARE UNIT Y/Y GROWTH, percent
+# ---------------------------------------------------------------------------
+# These exist only in the narrative bullets ("Fiscal 2026 [quarter] segment
+# results"), never in a table, which is exactly why they are worth having:
+# they are not derivable from net_revenue, since that would require FX rates
+# and unit counts this project has no other access to. Each release narrates
+# only its own current quarter against the same quarter a year earlier, so
+# coverage is the three FY26 quarters where the release itself was fetched.
+#
+# Two things HP does that this transcription preserves rather than smooths:
+# - Some quarters print "flat" instead of a number. Recorded as 0, since
+#   that is what "flat" means at the one-percent rounding HP publishes at,
+#   but it is HP's word, not a precise reading, and this note is the record
+#   of that.
+# - Q1 FY26 does not give Consumer/Commercial Printing units separately
+#   ("both reflecting similar declines"), so those two cells are absent
+#   rather than guessed at. Absence here means not disclosed, not zero.
+CC_GROWTH = {
+    "Q1 FY26": {"Personal Systems": 9, "Printing": -3, "Supplies": -2},
+    "Q2 FY26": {"Personal Systems": 10, "Printing": -2, "Supplies": 0},
+    "Q3 FY26": {"Personal Systems": 17, "Printing": -4, "Supplies": -4},
+}
+CC_GROWTH_SOURCE = {"Q1 FY26": PR_Q1FY26, "Q2 FY26": PR_Q2FY26, "Q3 FY26": PR_Q3FY26}
+
+UNITS_GROWTH = {
+    "Q1 FY26": {
+        "Personal Systems": 12, "Consumer PS": 14, "Commercial PS": 11,
+        "Printing": -6,
+        # Consumer/Commercial Printing units not separately disclosed this quarter.
+    },
+    "Q2 FY26": {
+        "Personal Systems": -7, "Consumer PS": -8, "Commercial PS": -7,
+        "Printing": -7, "Consumer Printing": -8, "Commercial Printing": -4,
+    },
+    "Q3 FY26": {
+        "Personal Systems": -16, "Consumer PS": -19, "Commercial PS": -14,
+        "Printing": -7, "Consumer Printing": -9, "Commercial Printing": -2,
+    },
+}
+UNITS_GROWTH_SOURCE = CC_GROWTH_SOURCE
+
+# Nominal y/y revenue growth for the units that don't get their own net_revenue
+# row above: Consumer PS, Commercial PS, Consumer Printing, Commercial Printing,
+# Supplies all already have revenue in REVISED/FY26 dicts, so their nominal
+# growth is computable from those directly and is not re-stated here. This
+# table exists only for the two totals HP narrates with an explicit headline
+# percent alongside the constant-currency figure, letting validate.py check
+# the two against each other the same way check 4 checks the restatement.
+YOY_NOMINAL = {
+    "Q1 FY26": {"Personal Systems": 11, "Printing": -2},
+    "Q2 FY26": {"Personal Systems": 13, "Printing": 0},
+    "Q3 FY26": {"Personal Systems": 18, "Printing": -2},
+}
+
+# ---------------------------------------------------------------------------
 
 rows = []
 
@@ -197,7 +256,23 @@ for q, vals in EBT_FY26.items():
         add(q, unit, "earnings_before_taxes", v, "USD millions",
             "FY26 realigned", FY26_SOURCE[q])
 
-FIELDS = ["fiscal_quarter", "quarter_end_date", "fiscal_year", "business_unit",
+# Constant-currency y/y growth, hardware unit y/y growth, and nominal y/y
+# growth for the two totals HP narrates explicitly. Prose-only figures,
+# see the CC_GROWTH comment above for what "flat" and absent cells mean.
+for q, vals in CC_GROWTH.items():
+    for unit, v in vals.items():
+        add(q, unit, "yoy_growth_cc_pct", v, "percent",
+            "FY26 realigned", CC_GROWTH_SOURCE[q])
+for q, vals in UNITS_GROWTH.items():
+    for unit, v in vals.items():
+        add(q, unit, "units_yoy_pct", v, "percent",
+            "FY26 realigned", UNITS_GROWTH_SOURCE[q])
+for q, vals in YOY_NOMINAL.items():
+    for unit, v in vals.items():
+        add(q, unit, "yoy_growth_pct", v, "percent",
+            "FY26 realigned", CC_GROWTH_SOURCE[q])
+
+FIELDS =["fiscal_quarter", "quarter_end_date", "fiscal_year", "business_unit",
           "segment", "metric", "value", "unit", "reporting_basis",
           "source_type", "source_url"]
 

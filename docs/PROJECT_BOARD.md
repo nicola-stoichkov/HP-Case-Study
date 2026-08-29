@@ -26,7 +26,7 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 | B4 | Extract regional revenue from SEC filings | Done | Americas, EMEA and APJ for all 11 quarters, table located by name rather than hardcoded file number |
 | B5 | Derive Q4 regional figures by subtraction | Done | Q4 rows marked `source_type = computed`, method documented |
 | B6 | Add cross-source reconciliation check | Done | Check 7 in `validate.py`, regional (SEC) reconciled against segment (press release) |
-| B7 | Add hardware units and constant currency figures | Backlog | Sourced from press release narrative, enabling price and mix and FX proxies |
+| B7 | Add hardware units and constant currency figures | Done | Sourced from press release narrative, enabling price and mix and FX proxies. Issue #20. |
 
 ## Workstream C: calculation layer
 
