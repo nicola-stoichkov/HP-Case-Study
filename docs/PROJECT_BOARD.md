@@ -32,7 +32,7 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 
 | ID | Task | Status | Acceptance criteria |
 |---|---|---|---|
-| C1 | Build revenue matrix by business unit and quarter | Backlog | `SUMIFS` pinned on both business unit and reporting basis, quarters in chronological order |
+| C1 | Build revenue matrix by business unit and quarter | Done | `SUMIFS` pinned on both business unit and reporting basis, quarters in chronological order. Built by hand in Sheets, validated against source: Q3 FY26 Printing 3,912, Total segment 15,679, both exact. Issue #10. |
 | C2 | Build growth layer and reconcile against HP figures | Backlog | Y/Y computed independently, compared against HP's published rate, differences flagged |
 | C3 | Build derived metrics | Backlog | TTM, share of parent, growth contribution decomposition, implied operating profit |
 | C4 | Document the calculation layer | Backlog | Both double counting traps written up in `docs/` |

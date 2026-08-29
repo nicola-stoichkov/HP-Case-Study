@@ -1,0 +1,29 @@
+# Spreadsheet Notes
+
+Notes on the formula layer in `spreadsheet/formula_layer.xlsx`, built by hand in Google Sheets, downloaded as .xlsx for the repo.
+
+---
+
+## 1. The `matrix` tab (C1)
+
+Revenue by business unit and quarter, on a toggleable reporting basis. Verified 2026-08-29 against the same source data `analysis/validate.py` checks:
+
+- Every value cell is `SUMIFS`, pinned on `business_unit` (`$D:$D, $A4`) **and** `reporting_basis` (`$I:$I, $A$1`), which is what avoids both double-counting traps documented in `docs/data_quality_notes.md`.
+- Quarters run chronologically (Q1 FY24 through Q3 FY26) via a sorted date row driving `XLOOKUP` for the labels, not the raw row order in the source file.
+- Spot-checked against source: Q3 FY26 Printing = 3,912, Q3 FY26 Total segment = 15,679. Both exact.
+- Toggling `A1` correctly zeroes the three FY26 columns under `as previously reported`, since that basis doesn't exist for FY26.
+
+## 2. A real gotcha: Google Sheets array functions don't survive the trip to Excel
+
+Downloading a Google Sheet as `.xlsx` converts every Sheets-native array formula (`FILTER`, `UNIQUE`, `SORT`, `TRANSPOSE` used together) into a wrapper called `__xludf.DUMMYFUNCTION`. That wrapper stores the *last computed value* as a frozen fallback, but the formula itself will not recalculate in real Microsoft Excel, because Excel doesn't have Google Sheets' `FILTER`/`UNIQUE`/`SORT` engine underneath the wrapper.
+
+**What this means concretely for `matrix`:**
+
+- Row 2 (the sorted quarter-end dates, built with `TRANSPOSE(SORT(UNIQUE(FILTER(...))))`) and column A (the business unit list, built with `UNIQUE(FILTER(...))`) are **frozen** in the Excel file. They'll display correctly as-is, but if the underlying `segment_data` tab changes (a new quarter added, for instance), these two ranges will not update in Excel. They would need to be rebuilt by hand, or the workbook rebuilt from Sheets again.
+- The `SUMIFS` body (every value cell, rows 4 through 12) and the `XLOOKUP` in row 3 are **fully portable**. Both are native Excel functions with no Sheets dependency, and will recalculate normally on any change.
+
+**Practical takeaway for the Power BI weekend:** don't build further Excel-only work on top of the frozen row 2 / column A ranges expecting them to stay live. Either keep doing the array-formula work in Sheets and re-download when it changes, or rebuild those two specific ranges natively in Excel (`FILTER`/`UNIQUE`/`SORT` do exist in modern Excel too, just not through this particular export path).
+
+## 3. A cosmetic non-issue, noted so it isn't mistaken for a bug
+
+`A1` in the workbook reads `FY26 Realigned` (capital R). The data itself uses `FY26 realigned` (lowercase r). `SUMIFS` text matching is case-insensitive in both Sheets and Excel, so every value cell still matches correctly, confirmed by the spot-checks above. Left as-is since it doesn't affect the numbers, but worth knowing if a stricter, case-sensitive tool is ever used against this same pattern.

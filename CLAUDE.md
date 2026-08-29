@@ -19,7 +19,7 @@ It is a **skills-demonstration artifact**, not a commercial deliverable.
 
 **Can:** parse press releases and SEC filings into structured data, write validation scripts (reconcile computed y/y against reported y/y), generate the Excel/CSV source file, draft DAX measure definitions with explanations, build the .pptx, maintain docs.
 
-**Cannot:** build the .pbix file. Power BI dashboard construction is GUI work done by hand, and that's intentional, it's the part that does the actual skill refresh.
+**Cannot:** build the .pbix file, or write formulas into the Sheets/Excel formula layer. Both are GUI work done by hand, and that's intentional, it's the part that does the actual skill refresh. Claude Code's role there is limited to guidance (explaining the formula pattern, checking the resulting numbers against source) and, once a workbook is handed over, validating it.
 
 ## Data sources
 
@@ -34,6 +34,7 @@ Quarters: Q1 FY24 through Q3 FY26 (11 quarters), extended beyond the original Q3
 - `data/raw/` — downloaded source files, unmodified
 - `data/processed/` — the tidy long-format tables
 - `analysis/` — scripts, validation
+- `spreadsheet/` — Sheets/Excel formula layer, built by hand
 - `dashboards/` — .pbix and exports
 - `deck/` — presentation
 - `docs/` — notes, decisions, limitations

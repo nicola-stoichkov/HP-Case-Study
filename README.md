@@ -28,6 +28,7 @@ Note on ticker: HPQ is HP Inc. HP on the NYSE is Helmerich & Payne, an unrelated
 data/raw/          source files as downloaded
 data/processed/    tidy tables, one row per figure, with sources
 analysis/          extraction and validation scripts
+spreadsheet/       Sheets/Excel formula layer (SUMIFS, XLOOKUP, y/y reconciliation)
 dashboards/        Power BI file and exports
 deck/              summary presentation
 docs/              notes, decisions, limitations
