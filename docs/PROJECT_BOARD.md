@@ -22,9 +22,10 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 |---|---|---|---|
 | B1 | Extract segment data from HP quarterly press releases | Done | 11 fiscal quarters, both reporting bases, every row carries a source URL |
 | B2 | Validate segment dataset against published source | Done | 5 assertions pass, including reconciliation against HP's own published restatement deltas |
-| B3 | Add revenue times margin reconciliation check | Backlog | Check 6 in `validate.py`, tolerance scaled to revenue rather than fixed |
-| B4 | Extract regional revenue from SEC filings | Backlog | Americas, EMEA and APJ for all 11 quarters, table located by name rather than hardcoded file number |
-| B5 | Derive Q4 regional figures by subtraction | Backlog | Q4 rows marked `source_type = computed`, method documented |
+| B3 | Add revenue times margin reconciliation check | Done | Check 6 in `validate.py`, tolerance scaled to revenue rather than fixed |
+| B4 | Extract regional revenue from SEC filings | Done | Americas, EMEA and APJ for all 11 quarters, table located by name rather than hardcoded file number |
+| B5 | Derive Q4 regional figures by subtraction | Done | Q4 rows marked `source_type = computed`, method documented |
+| B7 | Add cross-source reconciliation check | Done | Check 7 in `validate.py`, regional (SEC) reconciled against segment (press release) |
 | B6 | Add hardware units and constant currency figures | Backlog | Sourced from press release narrative, enabling price and mix and FX proxies |
 
 ## Workstream C: calculation layer
