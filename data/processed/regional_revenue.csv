@@ -1,34 +1,40 @@
-fiscal_quarter,quarter_end_date,fiscal_year,region,metric,value,unit,source_type,source_url
-Q1 FY24,2024-01-31,FY24,APJ,net_revenue,3109,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
-Q1 FY24,2024-01-31,FY24,Americas,net_revenue,5408,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
-Q1 FY24,2024-01-31,FY24,EMEA,net_revenue,4668,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
-Q2 FY24,2024-04-30,FY24,APJ,net_revenue,2836,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
-Q2 FY24,2024-04-30,FY24,Americas,net_revenue,5591,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
-Q2 FY24,2024-04-30,FY24,EMEA,net_revenue,4373,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
-Q3 FY24,2024-07-31,FY24,APJ,net_revenue,3013,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q3 FY24,2024-07-31,FY24,Americas,net_revenue,6086,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q3 FY24,2024-07-31,FY24,EMEA,net_revenue,4420,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q4 FY24,2024-10-31,FY24,APJ,net_revenue,3306,USD millions,computed,https://www.sec.gov/Archives/edgar/data/47217/000004721724000080/ minus https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q4 FY24,2024-10-31,FY24,Americas,net_revenue,6166,USD millions,computed,https://www.sec.gov/Archives/edgar/data/47217/000004721724000080/ minus https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q4 FY24,2024-10-31,FY24,EMEA,net_revenue,4583,USD millions,computed,https://www.sec.gov/Archives/edgar/data/47217/000004721724000080/ minus https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q1 FY25,2025-01-31,FY25,APJ,net_revenue,3231,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
-Q1 FY25,2025-01-31,FY25,Americas,net_revenue,5519,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
-Q1 FY25,2025-01-31,FY25,EMEA,net_revenue,4754,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
-Q2 FY25,2025-04-30,FY25,APJ,net_revenue,3034,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
-Q2 FY25,2025-04-30,FY25,Americas,net_revenue,5793,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
-Q2 FY25,2025-04-30,FY25,EMEA,net_revenue,4393,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
-Q3 FY25,2025-07-31,FY25,APJ,net_revenue,3323,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q3 FY25,2025-07-31,FY25,Americas,net_revenue,6107,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q3 FY25,2025-07-31,FY25,EMEA,net_revenue,4502,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q4 FY25,2025-10-31,FY25,APJ,net_revenue,3566,USD millions,computed,https://www.sec.gov/Archives/edgar/data/47217/000004721725000071/ minus https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q4 FY25,2025-10-31,FY25,Americas,net_revenue,6126,USD millions,computed,https://www.sec.gov/Archives/edgar/data/47217/000004721725000071/ minus https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q4 FY25,2025-10-31,FY25,EMEA,net_revenue,4947,USD millions,computed,https://www.sec.gov/Archives/edgar/data/47217/000004721725000071/ minus https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
-Q1 FY26,2026-01-31,FY26,APJ,net_revenue,3635,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000011/
-Q1 FY26,2026-01-31,FY26,Americas,net_revenue,5578,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000011/
-Q1 FY26,2026-01-31,FY26,EMEA,net_revenue,5225,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000011/
-Q2 FY26,2026-04-30,FY26,APJ,net_revenue,3580,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000029/
-Q2 FY26,2026-04-30,FY26,Americas,net_revenue,5857,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000029/
-Q2 FY26,2026-04-30,FY26,EMEA,net_revenue,4971,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000029/
-Q3 FY26,2026-07-31,FY26,APJ,net_revenue,4010,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000051/
-Q3 FY26,2026-07-31,FY26,Americas,net_revenue,6486,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000051/
-Q3 FY26,2026-07-31,FY26,EMEA,net_revenue,5181,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000051/
+fiscal_quarter,quarter_end_date,fiscal_year,period_type,region,metric,value,unit,source_type,source_url
+Q1 FY24,2024-01-31,FY24,quarter,APJ,net_revenue,3109,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
+Q1 FY24,2024-01-31,FY24,quarter,Americas,net_revenue,5408,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
+Q1 FY24,2024-01-31,FY24,quarter,EMEA,net_revenue,4668,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
+Q2 FY24,2024-04-30,FY24,quarter,APJ,net_revenue,2836,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
+Q2 FY24,2024-04-30,FY24,quarter,Americas,net_revenue,5591,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
+Q2 FY24,2024-04-30,FY24,quarter,EMEA,net_revenue,4373,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
+Q3 FY24,2024-07-31,FY24,quarter,APJ,net_revenue,3013,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
+Q3 FY24,2024-07-31,FY24,quarter,Americas,net_revenue,6086,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
+Q3 FY24,2024-07-31,FY24,quarter,EMEA,net_revenue,4420,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
+FY24,2024-10-31,FY24,full_year,APJ,net_revenue,12264,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721724000080/
+Q4 FY24,2024-10-31,FY24,quarter,APJ,net_revenue,3306,USD millions,computed,"FY24 row above, minus Q1+Q2+Q3 FY24 rows above"
+FY24,2024-10-31,FY24,full_year,Americas,net_revenue,23251,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721724000080/
+Q4 FY24,2024-10-31,FY24,quarter,Americas,net_revenue,6166,USD millions,computed,"FY24 row above, minus Q1+Q2+Q3 FY24 rows above"
+FY24,2024-10-31,FY24,full_year,EMEA,net_revenue,18044,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721724000080/
+Q4 FY24,2024-10-31,FY24,quarter,EMEA,net_revenue,4583,USD millions,computed,"FY24 row above, minus Q1+Q2+Q3 FY24 rows above"
+Q1 FY25,2025-01-31,FY25,quarter,APJ,net_revenue,3231,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
+Q1 FY25,2025-01-31,FY25,quarter,Americas,net_revenue,5519,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
+Q1 FY25,2025-01-31,FY25,quarter,EMEA,net_revenue,4754,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000025/
+Q2 FY25,2025-04-30,FY25,quarter,APJ,net_revenue,3034,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
+Q2 FY25,2025-04-30,FY25,quarter,Americas,net_revenue,5793,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
+Q2 FY25,2025-04-30,FY25,quarter,EMEA,net_revenue,4393,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000043/
+Q3 FY25,2025-07-31,FY25,quarter,APJ,net_revenue,3323,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
+Q3 FY25,2025-07-31,FY25,quarter,Americas,net_revenue,6107,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
+Q3 FY25,2025-07-31,FY25,quarter,EMEA,net_revenue,4502,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000063/
+FY25,2025-10-31,FY25,full_year,APJ,net_revenue,13154,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000071/
+Q4 FY25,2025-10-31,FY25,quarter,APJ,net_revenue,3566,USD millions,computed,"FY25 row above, minus Q1+Q2+Q3 FY25 rows above"
+FY25,2025-10-31,FY25,full_year,Americas,net_revenue,23545,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000071/
+Q4 FY25,2025-10-31,FY25,quarter,Americas,net_revenue,6126,USD millions,computed,"FY25 row above, minus Q1+Q2+Q3 FY25 rows above"
+FY25,2025-10-31,FY25,full_year,EMEA,net_revenue,18596,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721725000071/
+Q4 FY25,2025-10-31,FY25,quarter,EMEA,net_revenue,4947,USD millions,computed,"FY25 row above, minus Q1+Q2+Q3 FY25 rows above"
+Q1 FY26,2026-01-31,FY26,quarter,APJ,net_revenue,3635,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000011/
+Q1 FY26,2026-01-31,FY26,quarter,Americas,net_revenue,5578,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000011/
+Q1 FY26,2026-01-31,FY26,quarter,EMEA,net_revenue,5225,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000011/
+Q2 FY26,2026-04-30,FY26,quarter,APJ,net_revenue,3580,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000029/
+Q2 FY26,2026-04-30,FY26,quarter,Americas,net_revenue,5857,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000029/
+Q2 FY26,2026-04-30,FY26,quarter,EMEA,net_revenue,4971,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000029/
+Q3 FY26,2026-07-31,FY26,quarter,APJ,net_revenue,4010,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000051/
+Q3 FY26,2026-07-31,FY26,quarter,Americas,net_revenue,6486,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000051/
+Q3 FY26,2026-07-31,FY26,quarter,EMEA,net_revenue,5181,USD millions,reported,https://www.sec.gov/Archives/edgar/data/47217/000004721726000051/

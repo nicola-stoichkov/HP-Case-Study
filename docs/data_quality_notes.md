@@ -91,9 +91,11 @@ Regional revenue is not in the press release segment tables at all. It appears o
 
 **Q4 is derived, not reported.** Q4 never appears in a 10-Q, because the 10-K replaces it. So:
 
-> Q4 = full fiscal year, from the 10-K, minus the nine months ended 31 July, from the Q3 10-Q
+> Q4 = full fiscal year, from the 10-K, minus (Q1 + Q2 + Q3), from the three 10-Qs
 
-Those rows carry `source_type = computed`. The derivation checks out against an independent source: computed Q4 FY25 regional revenue totals 14,639, and HP separately prints total net revenue of 14,639 for that quarter in the Q1 FY26 press release. Different document, different table, same number.
+The full fiscal year figure is kept as its own row (`period_type = full_year`, `source_type = reported`) rather than only used internally and discarded, so the whole derivation is auditable from the CSV alone: any Q4 row's value equals its matching `FY` row minus the sum of that year's three `source_type = reported` quarterly rows, with every input to that subtraction sitting in the same table. Confirmed by hand 2026-08-29 that HP's disclosed "nine months ended" figure equals summing the three separately reported quarterly figures exactly, in all three regions, so this is equivalent to the original derivation, just checkable without leaving the file.
+
+The derivation also checks out against an independent source: computed Q4 FY25 regional revenue totals 14,639, and HP separately prints total net revenue of 14,639 for that quarter in the Q1 FY26 press release. Different document, different table, same number.
 
 **Two parser traps worth recording**, both of which produced silently wrong output before being caught:
 

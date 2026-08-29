@@ -183,6 +183,7 @@ def main():
     sources = facts.pop("_src", {})
     regions = ["Americas", "EMEA", "APJ", "TOTAL"]
     rows = []
+    quarter_value = {}  # (region, fiscal_year, quarter_num) -> value, for Q4 below
 
     # Quarters reported directly: the three month columns.
     quarters = sorted({d for (r, p, d) in facts if p == 3})
@@ -194,10 +195,12 @@ def main():
         for region in regions:
             key = (region, 3, date)
             if key in facts:
+                fy = f"FY{str(year)[2:]}"
                 rows.append({
-                    "fiscal_quarter": f"{q} FY{str(year)[2:]}",
+                    "fiscal_quarter": f"{q} {fy}",
                     "quarter_end_date": date,
-                    "fiscal_year": f"FY{str(year)[2:]}",
+                    "fiscal_year": fy,
+                    "period_type": "quarter",
                     "region": region,
                     "metric": "net_revenue",
                     "value": facts[key],
@@ -205,28 +208,53 @@ def main():
                     "source_type": "reported",
                     "source_url": sources.get(key, ""),
                 })
+                quarter_value[(region, fy, q)] = facts[key]
 
-    # Q4 is never in a 10-Q. Derive it: full year minus the nine months.
-    for fy_end, nine_end in (("2024-10-31", "2024-07-31"),
-                             ("2025-10-31", "2025-07-31")):
+    # Full fiscal year, as reported directly in the 10-K. Kept as its own row
+    # rather than only used internally, so the Q4 derivation below is checkable
+    # by anyone reading the CSV: FY total minus (Q1 + Q2 + Q3) = Q4, with every
+    # number in that sum sitting in this same table. Confirmed by hand 2026-08-29
+    # that HP's disclosed "nine months ended" figure equals summing the three
+    # separately reported quarters exactly, in all three regions, so deriving
+    # Q4 from the quarterly rows already in this file (rather than from a nine
+    # month figure that never appears here) changes nothing about the result.
+    for fy_end in ("2024-10-31", "2025-10-31"):
         year = int(fy_end[:4])
+        fy = f"FY{str(year)[2:]}"
         for region in regions:
             full = facts.get((region, 12, fy_end))
-            nine = facts.get((region, 9, nine_end))
-            if full is None or nine is None:
-                print(f"  WARNING: cannot derive Q4 {year} for {region}")
+            if full is None:
+                print(f"  WARNING: no full-year figure for {region} {fy}")
                 continue
             rows.append({
-                "fiscal_quarter": f"Q4 FY{str(year)[2:]}",
+                "fiscal_quarter": fy,
                 "quarter_end_date": fy_end,
-                "fiscal_year": f"FY{str(year)[2:]}",
+                "fiscal_year": fy,
+                "period_type": "full_year",
                 "region": region,
                 "metric": "net_revenue",
-                "value": full - nine,
+                "value": full,
+                "unit": "USD millions",
+                "source_type": "reported",
+                "source_url": sources.get((region, 12, fy_end), ""),
+            })
+
+            three_q = [quarter_value.get((region, fy, q)) for q in ("Q1", "Q2", "Q3")]
+            if None in three_q:
+                print(f"  WARNING: cannot derive Q4 {fy} for {region}, "
+                      f"missing quarterly data")
+                continue
+            rows.append({
+                "fiscal_quarter": f"Q4 {fy}",
+                "quarter_end_date": fy_end,
+                "fiscal_year": fy,
+                "period_type": "quarter",
+                "region": region,
+                "metric": "net_revenue",
+                "value": full - sum(three_q),
                 "unit": "USD millions",
                 "source_type": "computed",
-                "source_url": (sources.get((region, 12, fy_end), "") + " minus "
-                               + sources.get((region, 9, nine_end), "")),
+                "source_url": f"{fy} row above, minus Q1+Q2+Q3 {fy} rows above",
             })
 
     # Cross-check: the three regions must sum to total net revenue.
@@ -250,8 +278,8 @@ def main():
     rows = [r for r in rows if r["region"] != "TOTAL"]
     rows.sort(key=lambda r: (r["quarter_end_date"], r["region"]))
 
-    fields = ["fiscal_quarter", "quarter_end_date", "fiscal_year", "region",
-              "metric", "value", "unit", "source_type", "source_url"]
+    fields = ["fiscal_quarter", "quarter_end_date", "fiscal_year", "period_type",
+              "region", "metric", "value", "unit", "source_type", "source_url"]
     out = "../data/processed/regional_revenue.csv"
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fields)
