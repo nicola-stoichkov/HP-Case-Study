@@ -21,7 +21,7 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 | ID | Task | Status | Acceptance criteria |
 |---|---|---|---|
 | B1 | Extract segment data from HP quarterly press releases | Done | 11 fiscal quarters, both reporting bases, every row carries a source URL |
-| B2 | Validate segment dataset against published source | Done | 5 assertions pass, including reconciliation against HP's own published restatement deltas |
+| B2 | Validate segment dataset against published source | Done | 5 assertions pass, including reconciliation against HP's own published restatement deltas. Triple checked the methodology of Claude's data retrieving and actual numbers. Source of Q2 and Q3 for FY26 needed changes (globenewswire link was bot-blocked, swapped for HP's own investor.hp.com mirror of the same release). Committed. |
 | B3 | Add revenue times margin reconciliation check | Done | Check 6 in `validate.py`, tolerance scaled to revenue rather than fixed |
 | B4 | Extract regional revenue from SEC filings | Done | Americas, EMEA and APJ for all 11 quarters, table located by name rather than hardcoded file number |
 | B5 | Derive Q4 regional figures by subtraction | Done | Q4 rows marked `source_type = computed`, method documented |

@@ -13,7 +13,12 @@ April 30 here and recorded in docs/data_quality_notes.md.
 """
 import csv
 
-PR_Q3FY26 = "https://www.globenewswire.com/news-release/2026/08/26/3351698/0/en/hp-inc-reports-fiscal-2026-third-quarter-results.html"
+PR_Q3FY26 = "https://investor.hp.com/news-events/news/news-details/2026/HP-Inc--Reports-Fiscal-2026-Third-Quarter-Results/default.aspx"
+# Originally the globenewswire wire release. Swapped 2026-08-29: globenewswire
+# returns a bot-blocked error page in a normal browser, so it was not usable
+# as a citation someone else could actually click through and check. This
+# investor.hp.com URL is HP's own mirror of the identical release; the figures
+# transcribed below are unchanged, only the citation improved.
 PR_Q1FY26 = "https://investor.hp.com/news-events/news/news-details/2026/HP-Inc--Reports-Fiscal-2026-First-Quarter-Results/default.aspx"
 
 QUARTER_END = {
