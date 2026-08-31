@@ -41,8 +41,8 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 
 | ID | Task | Status | Acceptance criteria |
 |---|---|---|---|
-| D1 | Build date and business unit dimension tables | Backlog | Fiscal quarters sort chronologically, reported subtotals flagged so they cannot be summed with leaf rows |
-| D2 | Build Looker Studio dashboard | Backlog | Four visuals, totals agree with the spreadsheet layer |
+| D1 | Build date and business unit dimension tables | Done | Fiscal quarters sort chronologically via explicit sort_order, reported subtotals flagged via is_rollup so they cannot be summed with leaf rows. Issue #14. |
+| D2 | Build Looker Studio dashboard | Done | Four visuals, totals agree with the spreadsheet layer: revenue 15,679, y/y 12.53%, margin 7.8%. Export in dashboards/looker_studio_export.pdf. Issue #15. |
 | D3 | Rebuild the model in Power BI | Backlog | Same figures as Looker for the same filters |
 | D4 | Draft and review DAX measures | Backlog | Includes at least one `CALCULATE` measure, each explained rather than pasted |
 
