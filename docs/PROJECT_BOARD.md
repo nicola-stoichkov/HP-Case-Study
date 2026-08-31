@@ -34,8 +34,8 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 |---|---|---|---|
 | C1 | Build revenue matrix by business unit and quarter | Done | `SUMIFS` pinned on both business unit and reporting basis, quarters in chronological order. Built by hand in Sheets, validated against source: Q3 FY26 Printing 3,912, Total segment 15,679, both exact. Issue #10. |
 | C2 | Build growth layer and reconcile against HP figures | Done | Y/Y computed independently, compared against HP's published rate, differences flagged. Eight business units, Q3 FY26 vs Q3 FY25, all flag OK. Issue #11. |
-| C3 | Build derived metrics | Backlog | TTM, share of parent, growth contribution decomposition, implied operating profit |
-| C4 | Document the calculation layer | Backlog | Both double counting traps written up in `docs/` |
+| C3 | Build derived metrics | Done | TTM, share of parent, growth contribution decomposition, implied operating profit. All 12 implied-profit rows flag OK, decomposition sum matches yoy!F8 exactly. Issue #12. |
+| C4 | Document the calculation layer | Done | Both double counting traps written up in `docs/calculation_layer.md`, with worked numbers from the tabs. Issue #13. |
 
 ## Workstream D: dashboards
 

@@ -37,3 +37,12 @@ Independently computed y/y growth, reconciled against HP's own published percent
 - `HP Published` (column G) is transcribed by hand from HP's Q3 FY26 press release narrative, the same source already verified live against the page earlier in this project.
 - All eight rows flag `OK`. Largest gap is Commercial PS at 0.19 points (computed 21.93% against HP's rounded 22%), well inside the tolerance, consistent with HP rounding narrative growth to the nearest whole percent.
 - `Printing` (row 8) reads 3,912 for the current value and 4,002 for the prior year, matching `matrix` and the source exactly. `Total segment` (row 9) reads 15,679, also matching.
+
+## 5. The `derived` tab (C3)
+
+Four blocks, verified 2026-08-30 against source and against the other tabs:
+
+- **TTM.** The two earliest columns (Q2 FY24, Q3 FY24) are genuine incomplete windows, left in rather than deleted, since the dataset has no prior-year quarter to complete them. Q1 FY24 is left blank entirely rather than computing a meaningless one-quarter "trailing twelve months." First trustworthy value is Q4 FY24 (17,356); Q3 FY26 reads 16,579, matching the figure already verified in `docs/data_quality_notes.md` §8.
+- **Share of parent.** Both rows reference `matrix` directly rather than re-querying `segment_data`, so they inherit `matrix`'s defense against both double-counting traps for free. Q3 FY26: Supplies is 64.8% of Printing, Printing is 25.0% of Total segment.
+- **Growth contribution decomposition.** References `yoy` rather than `segment_data`, same reasoning. The three contributions sum to -0.02249, an exact match to `yoy!F8` (Printing's own computed y/y), confirming the parts add to the whole.
+- **Implied operating profit.** Twelve rows, the six quarters HP discloses margin for, times Printing and Personal Systems. All twelve flag `OK`. Largest absolute gap is Personal Systems Q3 FY26 (541.3 implied vs 537 reported, tolerance ±5.9), still within the margin-rounding tolerance and the same pair `analysis/validate.py` check 6 already verifies programmatically.
