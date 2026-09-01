@@ -16,7 +16,21 @@ Live report: `dashboards/looker_studio_export.pdf` is a point-in-time export fro
 
 ## 2. Looker Studio build (D2)
 
-Four visuals: Printing revenue by business unit (stacked column, leaf units only), regional revenue by region (stacked column), Printing share of Total & Supplies share of Printing (line chart, from `dim_date`), and three KPI cards (revenue, y/y growth, operating margin, all for Q3 FY26).
+Final layout, revised 2026-09-01 to a deliberate broad-to-narrow structure: three scorecards (zero dimensions, the broadest possible view) leading the page, then three levels of a single drill-down, each level pairing an absolute view with a rate-or-share view beside it.
+
+| Level | Absolute | Rate / share |
+|---|---|---|
+| Total | Revenue, y/y growth, operating margin (Q3 FY26) | — |
+| Region | Americas/EMEA/APJ, stacked column | Regional share of total, quarterly, line |
+| Segment | Personal Systems vs. Printing, stacked column | Segment share of total, line |
+| Business unit | Printing sub-units, stacked column | Printing sub-units, Y/Y growth, line |
+
+Two things deliberately left out, and why:
+
+- **A 100% stacked view of Printing's own sub-units.** Composition barely moves (Supplies runs 64.3% to 66.8% across all eleven quarters), so the chart would be flat and add nothing beyond what the absolute chart and the data quality notes already say.
+- **A chart mixing all five leaf categories (both segments) as a share of total.** It doesn't fit a single-branch drill-down, since it cuts laterally across Personal Systems' and Printing's leaves at once rather than going one level deeper into either. The underlying finding (Commercial PS +4.9pp against Supplies -3.2pp, Q1-Q3 basis FY24 to FY26) stays valid and citable from the `yearly_share` tab, just isn't charted.
+
+Regional share was originally planned as a yearly (Q1-Q3 basis) comparison to avoid comparing non-matching quarters, then reverted to quarterly once checked properly: share-of-total is a level, not a difference, so it doesn't get distorted by seasonality the way a growth *rate* does. Quarterly resolution shows the real seasonal wobble (Americas share dips every Q1, peaks every Q3/Q4) sitting on top of the real trend (Americas losing share to APJ), which is more honest than a clean 3-point chart that hides the texture.
 
 ## 3. Real bugs hit while building this, and what each one actually was
 
@@ -35,6 +49,10 @@ Four visuals: Printing revenue by business unit (stacked column, leaf units only
 **Chart-level filters apply to every metric in a chart, not per-metric.** Wanted a Printing growth-rate line layered onto the same chart as the three leaf units' stacked revenue. Couldn't, because that chart's filter (leaf units only) would exclude a Printing-level growth row even if one existed in the same source. Building it as a second, separate, standalone chart placed directly beneath the first avoided the problem entirely rather than needing a blend.
 
 **A chart title said EUR when every source document says USD.** Caught before it reached anyone else, but worth recording as the reminder it is: a labeling mistake in a chart title is invisible to every validation check that only looks at the numbers.
+
+**A missing filter silently summed different metrics together.** The Personal Systems vs. Printing chart was built straight from `segment_data` without a `metric = net_revenue` filter, so from Q1 FY25 onward (the first quarter where operating margin and earnings before taxes exist alongside revenue) it was adding revenue dollars, margin percentage points, profit dollars, and, for FY26 quarters, growth-rate percentages, all into one number. Every value looked plausible, since the wrong sum still landed in roughly the right range and roughly the right shape. Confirmed by reconstructing the exact arithmetic: Q1 FY26 Personal Systems showed 10,799, which is precisely 10,251 (revenue) + 511 (EBT) + 5.0 (margin) + 11 + 9 + 12 (three growth-rate metrics). This is the same shape of failure as the two double-counting traps documented in `docs/calculation_layer.md`, just one level up: those are about summing the *right* metric across the *wrong* rows, this was summing the *wrong* metrics across the *right* rows. Same lesson either way: a plausible number is not a checked number.
+
+**The phantom-row bug came back after a column reshuffle.** The `TRANSPOSE` incident above was fixed by pasting two cells as static values, but a later reorganisation of `dim_date`'s columns left an empty row 13 hanging off the end of the table (present as a row with empty cells, not deleted). Same failure mode as before: an artifact inside a connected range, invisible until the connection itself misbehaves. Deleting the row (not just clearing its cells) fixed it. Worth remembering as a pattern rather than a one-off: any edit that shifts a table's shape is worth checking for leftover rows or columns at the boundary, not just verifying the cells that were intentionally changed.
 
 ## 4. Known limitation carried from `spreadsheet_notes.md`
 
