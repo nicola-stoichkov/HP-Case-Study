@@ -50,7 +50,7 @@ Mirrored as a GitHub Project board. Items convert to issues when started, and th
 
 | ID | Task | Status | Acceptance criteria |
 |---|---|---|---|
-| E1 | Draft the deck | Backlog | Six slides, ends on questions rather than recommendations |
+| E1 | Draft the deck | Done | Six slides, ends on questions rather than recommendations. `deck/printing_segment_briefing.html`. |
 | E2 | Rehearse the walkthrough aloud | Backlog | 90 seconds, recorded once and listened back |
 
 ## Out of scope, deliberately

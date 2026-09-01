@@ -1,0 +1,546 @@
+<title>Printing Segment Briefing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ink:        #17223B;
+    --ink-soft:   #3D4A63;
+    --muted:      #5B6472;
+    --ground:     #FAFBFC;
+    --surface:    #FFFFFF;
+    --panel:      #F1F3F7;
+    --rule:       #E3E7ED;
+    --accent:     #C81E5C;
+    --accent-soft:#FBE7EF;
+    --slate:      #4C6B8A;
+    --slate-soft: #E7EEF3;
+
+    --dark-bg:    #131C2E;
+    --dark-panel: #1C2740;
+    --dark-ink:   #EDEFF4;
+    --dark-muted: #97A2BA;
+    --dark-accent:#FF5C8D;
+    --dark-rule:  #2A3652;
+
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --body: "IBM Plex Sans", Arial, "Helvetica Neue", sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--dark-bg);
+    font-family: var(--body);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  section.slide {
+    position: relative;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    padding: 4.2vw 6vw;
+    overflow: hidden;
+  }
+
+  section.dark {
+    background: var(--dark-bg);
+    color: var(--dark-ink);
+  }
+  section.light {
+    background: var(--ground);
+    color: var(--ink);
+    border-top: 1px solid var(--rule);
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.6rem;
+  }
+  .dark .kicker { color: var(--dark-muted); }
+
+  h1.title {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h2.slide-title {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    line-height: 1.12;
+    letter-spacing: -0.005em;
+    margin: 0 0 2.2rem;
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--dark-muted);
+    max-width: 42ch;
+    margin: 1.4rem 0 0;
+  }
+
+  .byline {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--dark-muted);
+    letter-spacing: 0.02em;
+    margin-top: auto;
+    padding-top: 2rem;
+    display: flex;
+    gap: 0.6em;
+    flex-wrap: wrap;
+  }
+  .byline .sep { opacity: 0.4; }
+
+  /* ---------- halftone motif ---------- */
+  .halftone {
+    position: absolute;
+    right: -2vw;
+    bottom: -2vw;
+    width: min(46vw, 520px);
+    height: min(46vw, 520px);
+    pointer-events: none;
+  }
+
+  /* ---------- content grid helpers ---------- */
+  .content-body { flex: 1; display: flex; flex-direction: column; }
+
+  .row {
+    display: grid;
+    gap: 2.6rem;
+    align-items: start;
+  }
+  .row.two { grid-template-columns: minmax(280px, 0.9fr) 1.4fr; }
+
+  .stat-stack { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.3rem 1.5rem;
+    box-shadow: 0 1px 2px rgba(23,34,59,0.04);
+  }
+  .stat-num {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+    color: var(--accent);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-num .arrow { color: var(--ink-soft); font-family: var(--body); font-weight: 400; font-size: 0.55em; margin: 0 0.15em; }
+  .stat-label {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-top: 0.5rem;
+  }
+
+  .chart-panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.6rem 1.8rem 1.2rem;
+  }
+  .chart-panel h3 {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.6rem;
+  }
+  .chart-legend span { display: inline-flex; align-items: center; gap: 0.4em; }
+  .swatch { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  .callout {
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 1.1rem 1.4rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-top: 1.4rem;
+  }
+  .callout strong { color: var(--ink); }
+  .callout.limit {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+  }
+
+  /* icon-row list, slide 2 */
+  .method-list { display: flex; flex-direction: column; gap: 1.5rem; max-width: 46rem; }
+  .method-row { display: grid; grid-template-columns: 44px 1fr; gap: 1.1rem; align-items: start; }
+  .method-dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--panel);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 600; font-size: 0.9rem; color: var(--accent);
+    flex: none;
+  }
+  .method-row h4 { font-family: var(--body); font-weight: 600; font-size: 1.08rem; margin: 0.1rem 0 0.3rem; color: var(--ink); }
+  .method-row p { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--ink-soft); }
+
+  .stat-band { display: flex; gap: 2.6rem; margin-top: 2.4rem; flex-wrap: wrap; }
+  .stat-band div { display: flex; flex-direction: column; }
+  .stat-band .n { font-family: var(--mono); font-weight: 600; font-size: 1.6rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat-band .l { font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
+
+  /* observations, slide 5 */
+  .obs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem 2.2rem; }
+  .obs-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.3rem 1.5rem;
+  }
+  .obs-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .obs-card p { margin: 0; font-size: 0.98rem; line-height: 1.55; color: var(--ink-soft); }
+  .obs-card p strong { color: var(--ink); }
+  .obs-card.wide { grid-column: 1 / -1; }
+
+  /* questions, slide 6 */
+  .q-list { display: flex; flex-direction: column; gap: 0; max-width: 52rem; }
+  .q-row {
+    display: grid; grid-template-columns: 32px 1fr; gap: 1.1rem;
+    padding: 1.35rem 0;
+    border-bottom: 1px solid var(--dark-rule);
+  }
+  .q-row:first-child { border-top: 1px solid var(--dark-rule); }
+  .q-mark {
+    font-family: var(--display); font-size: 1.5rem; color: var(--dark-accent); line-height: 1;
+  }
+  .q-row p { margin: 0; font-size: 1.08rem; line-height: 1.55; color: var(--dark-ink); }
+
+  a { color: inherit; }
+
+  .src {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: auto;
+    padding-top: 1.4rem;
+  }
+  .dark .src { color: var(--dark-muted); }
+
+  /* ---------- nav dots ---------- */
+  nav.rail {
+    position: fixed;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 20;
+  }
+  nav.rail a {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(200,30,92,0.28);
+    display: block;
+    transition: background 0.2s, transform 0.2s;
+  }
+  nav.rail a.active { background: var(--accent); transform: scale(1.35); }
+
+  @media (max-width: 820px) {
+    .row.two { grid-template-columns: 1fr; }
+    .obs-grid { grid-template-columns: 1fr; }
+    nav.rail { display: none; }
+    section.slide { padding: 8vw 6vw; }
+  }
+
+  @media print {
+    html { scroll-snap-type: none; }
+    nav.rail { display: none; }
+    section.slide { min-height: 100vh; page-break-after: always; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    nav.rail a { transition: none; }
+  }
+</style>
+
+<nav class="rail" id="rail">
+  <a href="#s1" class="active" data-i="0"></a>
+  <a href="#s2" data-i="1"></a>
+  <a href="#s3" data-i="2"></a>
+  <a href="#s4" data-i="3"></a>
+  <a href="#s5" data-i="4"></a>
+  <a href="#s6" data-i="5"></a>
+</nav>
+
+<!-- ============ SLIDE 1 : TITLE ============ -->
+<section class="slide dark" id="s1">
+  <svg class="halftone" viewBox="0 0 400 400" aria-hidden="true">
+    <g fill="#FF5C8D">
+      <circle cx="380" cy="380" r="26" opacity="0.9"/>
+      <circle cx="320" cy="380" r="22" opacity="0.75"/>
+      <circle cx="380" cy="320" r="22" opacity="0.75"/>
+      <circle cx="260" cy="380" r="16" opacity="0.55"/>
+      <circle cx="320" cy="320" r="16" opacity="0.55"/>
+      <circle cx="380" cy="260" r="16" opacity="0.55"/>
+      <circle cx="200" cy="380" r="10" opacity="0.38"/>
+      <circle cx="260" cy="320" r="10" opacity="0.38"/>
+      <circle cx="320" cy="260" r="10" opacity="0.38"/>
+      <circle cx="380" cy="200" r="10" opacity="0.38"/>
+      <circle cx="140" cy="380" r="6" opacity="0.22"/>
+      <circle cx="200" cy="320" r="6" opacity="0.22"/>
+      <circle cx="260" cy="260" r="6" opacity="0.22"/>
+      <circle cx="320" cy="200" r="6" opacity="0.22"/>
+      <circle cx="380" cy="140" r="6" opacity="0.22"/>
+    </g>
+  </svg>
+  <div class="kicker">HP Inc. &middot; Printing segment &middot; public reporting</div>
+  <h1 class="title">Printing Segment<br>Briefing</h1>
+  <p class="standfirst">Eleven fiscal quarters of HP's own published numbers, read carefully. Prepared as practice for the EMEA Home Print Category interview, not as advice for the team that already knows this business.</p>
+  <div class="byline">
+    <span>Nicola Stoichkov</span><span class="sep">/</span>
+    <span>Graduate Business Intelligence Analyst, EMEA Home Print</span><span class="sep">/</span>
+    <span>September 2026</span>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 : DATA & METHOD ============ -->
+<section class="slide light" id="s2">
+  <div class="kicker">01 &middot; Sourcing</div>
+  <h2 class="slide-title">Every figure traces back to a public source</h2>
+  <div class="content-body">
+    <div class="method-list">
+      <div class="method-row">
+        <div class="method-dot">PR</div>
+        <div>
+          <h4>Press releases</h4>
+          <p>HP's own quarterly results, the primary source for segment revenue, operating margin, and the narrative growth figures that never appear in any table.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <div class="method-dot">EDG</div>
+        <div>
+          <h4>SEC filings</h4>
+          <p>10-Q and 10-K filings on EDGAR, CIK 47217 (HPQ). Used for regional revenue, which HP does not publish in its press releases at all.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <div class="method-dot">&#10003;</div>
+        <div>
+          <h4>Eight validation checks</h4>
+          <p>Internal consistency, reconciliation against HP's own published restatement deltas, and two checks that test the segment and regional datasets against each other rather than against themselves.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <div class="method-dot">&#8644;</div>
+        <div>
+          <h4>The FY26 restatement</h4>
+          <p>HP moved Print as a Service out of Corporate Investments and into Printing, then restated prior periods. The same quarter now has two published figures. Both are kept on record, side by side, never mixed.</p>
+        </div>
+      </div>
+    </div>
+    <div class="stat-band">
+      <div><span class="n">11</span><span class="l">fiscal quarters, Q1 FY24 through Q3 FY26</span></div>
+      <div><span class="n">253</span><span class="l">segment rows, each with a source URL</span></div>
+      <div><span class="n">8 / 8</span><span class="l">validation checks passing</span></div>
+    </div>
+  </div>
+  <div class="src">Sources: HP Inc. quarterly press releases, investor.hp.com &middot; SEC EDGAR, CIK 0000047217</div>
+</section>
+
+<!-- ============ SLIDE 3 : PRINTING MIX ============ -->
+<section class="slide light" id="s3">
+  <div class="kicker">02 &middot; Printing mix</div>
+  <h2 class="slide-title">Printing's share of HP is falling, and Supplies is carrying most of the recent decline</h2>
+  <div class="content-body">
+    <div class="row two">
+      <div class="stat-stack">
+        <div class="stat-card">
+          <div class="stat-num">33.2%<span class="arrow">&rarr;</span>25.0%</div>
+          <div class="stat-label">Printing's share of total HP revenue, Q1 FY24 to Q3 FY26. Personal Systems grew faster. This is a mix shift, not a Printing collapse.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">&minus;4.5%</div>
+          <div class="stat-label">Trailing twelve month Printing revenue, Q4 FY24 to Q3 FY26. The real two year trend once quarterly seasonality is removed.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">81%</div>
+          <div class="stat-label">Share of Q3 FY26's Printing decline caused by Supplies alone. Commercial and Consumer Printing barely moved.</div>
+        </div>
+      </div>
+      <div class="chart-panel">
+        <h3>Printing as a share of total HP revenue, by quarter</h3>
+        <svg viewBox="0 0 640 220" width="100%" role="img" aria-label="Line chart showing Printing share of total revenue declining from 33.2 percent to 25.0 percent across eleven quarters">
+          <line x1="10" y1="63.3" x2="630" y2="63.3" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="10" y1="154.4" x2="630" y2="154.4" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="2 4"/>
+          <polyline points="10.0,63.3 72.0,53.3 134.0,91.1 196.0,80.0 258.0,80.0 320.0,80.0 382.0,113.3 444.0,106.7 506.0,110.0 568.0,108.9 630.0,154.4"
+                    fill="none" stroke="#C81E5C" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="10.0" cy="63.3" r="4" fill="#C81E5C"/>
+          <circle cx="630.0" cy="154.4" r="4" fill="#C81E5C"/>
+          <text x="10" y="50" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#17223B">33.2%</text>
+          <text x="585" y="172" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#C81E5C">25.0%</text>
+          <text x="10" y="210" font-family="IBM Plex Sans" font-size="11" fill="#5B6472">Q1 FY24</text>
+          <text x="560" y="210" font-family="IBM Plex Sans" font-size="11" fill="#5B6472">Q3 FY26</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="src">Source: segment_data.csv, net_revenue by business unit, FY26 realigned basis</div>
+</section>
+
+<!-- ============ SLIDE 4 : REGIONAL / EMEA ============ -->
+<section class="slide light" id="s4">
+  <div class="kicker">03 &middot; Regional, EMEA focus</div>
+  <h2 class="slide-title">EMEA growth is accelerating, though EMEA Printing specifically cannot be seen at all</h2>
+  <div class="content-body">
+    <div class="row two">
+      <div class="chart-panel">
+        <h3>Total HP revenue, year over year growth by region</h3>
+        <svg viewBox="0 0 640 280" width="100%" role="img" aria-label="Line chart showing EMEA year over year growth accelerating from 1.8 percent to 15.1 percent, ahead of Americas and behind APJ">
+          <line x1="10" y1="221.2" x2="630" y2="221.2" stroke="#C7CEDA" stroke-width="1"/>
+          <polyline points="10.0,201.0 113.3,186.6 216.7,218.3 320.0,227.0 423.3,210.6 526.7,210.6 630.0,161.7" fill="none" stroke="#B9C4D2" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <polyline points="10.0,183.8 113.3,154.0 216.7,122.3 320.0,145.4 423.3,101.2 526.7,48.4 630.0,22.5" fill="none" stroke="#4C6B8A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <polyline points="10.0,203.9 113.3,216.4 216.7,203.0 320.0,145.4 423.3,126.2 526.7,94.5 630.0,76.2" fill="none" stroke="#C81E5C" stroke-width="2.75" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="630.0" cy="76.2" r="4.5" fill="#C81E5C"/>
+          <circle cx="630.0" cy="22.5" r="4" fill="#4C6B8A"/>
+          <circle cx="630.0" cy="161.7" r="4" fill="#B9C4D2"/>
+          <text x="560" y="70" font-family="IBM Plex Mono" font-size="12.5" font-weight="600" fill="#C81E5C">EMEA +15.1%</text>
+          <text x="540" y="18" font-family="IBM Plex Mono" font-size="12.5" font-weight="600" fill="#4C6B8A">APJ +20.7%</text>
+          <text x="500" y="180" font-family="IBM Plex Mono" font-size="12.5" font-weight="600" fill="#8996A9">Americas +6.2%</text>
+          <text x="10" y="240" font-family="IBM Plex Sans" font-size="11" fill="#5B6472">Q1 FY25</text>
+          <text x="580" y="240" font-family="IBM Plex Sans" font-size="11" fill="#5B6472">Q3 FY26</text>
+        </svg>
+      </div>
+      <div class="stat-stack">
+        <div class="stat-card">
+          <div class="stat-num">1.8%<span class="arrow">&rarr;</span>15.1%</div>
+          <div class="stat-label">EMEA revenue growth, year over year, Q1 FY25 to Q3 FY26. Real acceleration, not a rounding artefact.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">43.2%<span class="arrow">&rarr;</span>40.3%</div>
+          <div class="stat-label">Americas share of total revenue, Q1 to Q3 basis, FY24 versus FY26. Losing share, mainly to APJ, while EMEA holds steady at roughly 34%.</div>
+        </div>
+        <div class="callout limit">
+          <strong>The limit of public data.</strong> HP discloses revenue by region for the whole company, and by business unit globally. Never the two crossed. EMEA Printing revenue is not in any public filing.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="src">Source: regional_revenue.csv, SEC EDGAR 10-Q and 10-K filings, quarterly rows only</div>
+</section>
+
+<!-- ============ SLIDE 5 : OBSERVATIONS ============ -->
+<section class="slide light" id="s5">
+  <div class="kicker">04 &middot; Observations, not conclusions</div>
+  <h2 class="slide-title">What the data shows, stated as observations</h2>
+  <div class="content-body">
+    <div class="obs-grid">
+      <div class="obs-card">
+        <span class="obs-tag">Structure</span>
+        <p><strong>Printing's shrinking share of HP is a growth story elsewhere</strong>, not a decline story here. Personal Systems, likely AI PC demand, is outrunning it.</p>
+      </div>
+      <div class="obs-card">
+        <span class="obs-tag">Composition</span>
+        <p><strong>Supplies, not hardware, is carrying Printing's recent decline.</strong> 81% of the Q3 FY26 drop traces to Supplies alone.</p>
+      </div>
+      <div class="obs-card">
+        <span class="obs-tag">Home Print</span>
+        <p>Consumer Printing units fell <strong>9.0%</strong> while revenue fell only <strong>1.8%</strong>, suggesting price or mix is offsetting volume.</p>
+      </div>
+      <div class="obs-card">
+        <span class="obs-tag">Currency</span>
+        <p>A weakening dollar added roughly <strong>1 to 2 points</strong> of growth to Printing across FY26, on top of the underlying trend.</p>
+      </div>
+      <div class="obs-card wide">
+        <span class="obs-tag">Data integrity</span>
+        <p>The FY26 restatement moved a loss making business into Printing in the same move: <strong>revenue up, earnings down.</strong> The best evidence in this dataset that a single published number can hide two different stories depending on which release it came from.</p>
+      </div>
+    </div>
+  </div>
+  <div class="src">All figures independently reconciled against HP's own published growth rates and restatement deltas</div>
+</section>
+
+<!-- ============ SLIDE 6 : QUESTIONS ============ -->
+<section class="slide dark" id="s6">
+  <svg class="halftone" viewBox="0 0 400 400" aria-hidden="true" style="right:auto; left:-2vw; bottom:-2vw;">
+    <g fill="#FF5C8D">
+      <circle cx="20" cy="380" r="26" opacity="0.9"/>
+      <circle cx="80" cy="380" r="22" opacity="0.75"/>
+      <circle cx="20" cy="320" r="22" opacity="0.75"/>
+      <circle cx="140" cy="380" r="16" opacity="0.55"/>
+      <circle cx="80" cy="320" r="16" opacity="0.55"/>
+      <circle cx="20" cy="260" r="16" opacity="0.55"/>
+      <circle cx="200" cy="380" r="10" opacity="0.38"/>
+      <circle cx="140" cy="320" r="10" opacity="0.38"/>
+      <circle cx="80" cy="260" r="10" opacity="0.38"/>
+      <circle cx="20" cy="200" r="10" opacity="0.38"/>
+    </g>
+  </svg>
+  <div class="kicker">05 &middot; What I'd want to ask</div>
+  <h2 class="slide-title" style="color: var(--dark-ink); max-width: 34ch;">Questions the public data cannot answer</h2>
+  <div class="content-body">
+    <div class="q-list">
+      <div class="q-row"><span class="q-mark">?</span><p>Is EMEA Printing growing in line with EMEA overall, or is Home Print diverging from the regional trend the public data shows?</p></div>
+      <div class="q-row"><span class="q-mark">?</span><p>Is Consumer Printing's apparent price or mix gain a deliberate strategy, or a shift I'm reading correctly but explaining from too far outside?</p></div>
+      <div class="q-row"><span class="q-mark">?</span><p>Is the Supplies decline market share loss, or timing in the channel, sell in against sell out?</p></div>
+      <div class="q-row"><span class="q-mark">?</span><p>What does syndicated data, Circana or GfK, show for EMEA Home Print that public filings simply cannot?</p></div>
+      <div class="q-row"><span class="q-mark">?</span><p>How is AI, Copilot in print devices, HP IQ, actually changing day to day work in the category team right now?</p></div>
+    </div>
+  </div>
+  <div class="byline"><span>Thank you</span><span class="sep">/</span><span>Nicola Stoichkov</span></div>
+</section>
+
+<script>
+(function(){
+  var dots = document.querySelectorAll('nav.rail a');
+  var sections = document.querySelectorAll('section.slide');
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) {
+        var idx = Array.prototype.indexOf.call(sections, e.target);
+        dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(function(s){ io.observe(s); });
+})();
+</script>
