@@ -1,6 +1,6 @@
 # Dashboard Notes
 
-Notes on the Looker Studio build (D2) and the two dimension tables that support it (D1). Power BI notes get added here once that rebuild starts.
+Notes on the Looker Studio build (D2), the two dimension tables that support it (D1), and the Power BI rebuild (D3).
 
 Live report: `dashboards/looker_studio_export.pdf` is a point-in-time export from 2026-08-31. Not yet linked live, since the report is still being edited; a live share link gets added here once it's in a state worth sharing.
 
@@ -57,3 +57,15 @@ Regional share was originally planned as a yearly (Q1-Q3 basis) comparison to av
 ## 4. Known limitation carried from `spreadsheet_notes.md`
 
 The `TRANSPOSE`/`FILTER`/`UNIQUE`/`SORT` fragility documented there for the Sheets-to-Excel export path is the same category of issue as the `dim_date` incident above: a live formula that only some tools evaluate correctly. Both are recorded so neither is mistaken for a data error later.
+
+## 5. Power BI (D3), first pass, 2026-09-02
+
+`dashboards/power_bi_report.pbix`. Six of seven planned visuals built (the three scorecards, Power BI's `Card` visual, not yet added). Not styled yet, by the builder's own assessment, and not marked done on the board for a second reason below.
+
+**Built with Power Query conditional columns, not DAX measures.** `docs/dax_measures.md` was drafted assuming a DAX approach and was not actually used to build this. That gap needs resolving, either by adding real DAX measures on top of what exists (the original plan's `CALCULATE`, `DIVIDE`, and filter-context-override Y/Y pattern all still have genuine teaching value for the interview) or by rewriting `dax_measures.md` to describe what was actually built. Left open deliberately rather than silently reconciled, since it's the user's call which direction to take.
+
+**A circular dependency, and why it happened.** Sorting `region` by a calculated column (`region_sort_order`, built with `SWITCH(regional_revenue[region], ...)`) failed with "a circular dependency was detected." The calculated column's DAX formula reads `region`, so Power BI's dependency graph sees `region_sort_order` depending on `region`; asking it to also sort `region` *by* `region_sort_order` closes the loop, even though no single row's value actually depends on another row's sort order. Power BI's checker doesn't distinguish the two. Fixed by moving the same logic into a Power Query Conditional Column instead, computed at load time, before the DAX dependency graph exists, so the circularity check never triggers. The general lesson: a column meant to control the sort order of a field it's also derived from needs to be built in Power Query, not DAX, whenever the two would otherwise reference each other.
+
+**Validated by reading the report's own JSON, not by re-deriving the numbers.** Power BI's newer PBIR format stores each visual's field bindings and filters as plain, readable JSON (`Report/definition/pages/.../visuals/*/visual.json`), unlike the `DataModel` binary, which is proprietary and wasn't parseable here. That let the filter configuration on every visual be checked directly: two of three column charts (Personal Systems vs. Printing, Printing sub-units) have `business_unit`, `metric = net_revenue`, and `reporting_basis = FY26 realigned` all correctly pinned. The third, the regional stacked column, is missing `period_type = "quarter"`, so it will show thirteen categories instead of eleven, the two full-year summary rows appearing as extra bars alongside the real quarters. Structure was verifiable this way; the actual computed values in `DataModel` were not, so this is a structural check, not a full reconciliation against source the way the spreadsheet got.
+
+**First read of the filter JSON was wrong, worth recording why.** Read `visual.filterConfig` (nested inside the `visual` object) and found nothing, concluded all six visuals had zero filters. `filterConfig` actually sits as a sibling of `visual` at the top level of the file, one level up from where it was checked. Caught by grepping the raw file text for the word "filter" and finding real matches the structured parse had missed, then re-parsing with the correct path. The lesson repeats one already in this project's history: a validation check that returns a clean result is only as trustworthy as the path it actually looked at.
