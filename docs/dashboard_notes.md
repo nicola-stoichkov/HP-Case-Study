@@ -20,7 +20,7 @@ Final layout, revised 2026-09-01 to a deliberate broad-to-narrow structure: thre
 
 | Level | Absolute | Rate / share |
 |---|---|---|
-| Total | Revenue, y/y growth, operating margin (Q3 FY26) | — |
+| Total | Revenue, y/y growth, operating margin (Q3 FY26) | n/a |
 | Region | Americas/EMEA/APJ, stacked column | Regional share of total, quarterly, line |
 | Segment | Personal Systems vs. Printing, stacked column | Segment share of total, line |
 | Business unit | Printing sub-units, stacked column | Printing sub-units, Y/Y growth, line |
@@ -69,3 +69,58 @@ The `TRANSPOSE`/`FILTER`/`UNIQUE`/`SORT` fragility documented there for the Shee
 **Validated by reading the report's own JSON, not by re-deriving the numbers.** Power BI's newer PBIR format stores each visual's field bindings and filters as plain, readable JSON (`Report/definition/pages/.../visuals/*/visual.json`), unlike the `DataModel` binary, which is proprietary and wasn't parseable here. That let the filter configuration on every visual be checked directly: two of three column charts (Personal Systems vs. Printing, Printing sub-units) have `business_unit`, `metric = net_revenue`, and `reporting_basis = FY26 realigned` all correctly pinned. The third, the regional stacked column, is missing `period_type = "quarter"`, so it will show thirteen categories instead of eleven, the two full-year summary rows appearing as extra bars alongside the real quarters. Structure was verifiable this way; the actual computed values in `DataModel` were not, so this is a structural check, not a full reconciliation against source the way the spreadsheet got.
 
 **First read of the filter JSON was wrong, worth recording why.** Read `visual.filterConfig` (nested inside the `visual` object) and found nothing, concluded all six visuals had zero filters. `filterConfig` actually sits as a sibling of `visual` at the top level of the file, one level up from where it was checked. Caught by grepping the raw file text for the word "filter" and finding real matches the structured parse had missed, then re-parsing with the correct path. The lesson repeats one already in this project's history: a validation check that returns a clean result is only as trustworthy as the path it actually looked at.
+
+**Follow-up, 2026-09-02: the regional chart's `period_type` scoping was correct all along.** The read above found a real gap at the visual layer, the regional stacked column's `filterConfig` genuinely has no `period_type` filter attached to it. What that check couldn't see is the load-time scoping: confirmed the chart was always built against data already filtered to quarters, at the Power Query M step rather than a visual-level filter. The PBIR JSON only exposes the DAX/visual layer, the M queries live in the binary `DataModel`, unparseable by the same method that worked for everything else in this file (the same limitation already noted above for `DataModel`'s actual values, just extended here to the load step too). So the earlier finding wasn't wrong about what the JSON showed, it was incomplete about what the JSON *could* show. No fix needed on this one.
+
+## 6. Power BI v2: three pages, a bookmark toggle, and DAX measures, built and verified 2026-09-02
+
+Expanded the single-page report into three pages (`General Overview`, `Region & Segment Overview`, `Printing Overview`) to use more of Power BI's own functionality: multiple pages, KPI Card visuals, a bookmark-driven toggle, and the project's first real DAX (everything through the first pass above was Power Query conditional columns only). Built by hand, same discipline as everywhere else in this project; verified afterward by reading the finished `.pbix`'s PBIR JSON directly, the same method as the first pass, not by re-deriving the numbers inside Power BI.
+
+### General Overview: KPIs and TTM
+
+Three `Card` visuals (Printing net revenue, y/y growth, operating margin, all Q3 FY26) plus a line chart of `dim_date[fiscal_quarter]` against `dim_date[ttm_printing_revenue]`.
+
+**A real bug, same shape as one already in this file.** The operating margin card showed **780.00%**. `operating_margin_pct` is stored as `7.8` meaning 7.8%, so Power BI's built-in Percentage format multiplied it by 100, on top of the number already being a whole percent. This is the identical trap that produced a 780% scorecard in Looker Studio (§3 above), same convention mismatch, second tool. Fixed with a measure and a custom format string rather than a calculated column, since the `value` column is shared with revenue and margin and a blanket /100 would have broken the revenue cards:
+
+```dax
+Operating Margin =
+CALCULATE(
+    SUM(segment_data[value]),
+    segment_data[metric] = "operating_margin_pct"
+)
+```
+
+Formatted via Measure tools → Format → Custom, format string `0.0"%"`, which appends a literal percent sign without multiplying, so `7.8` displays as `7.8%`. Confirmed correct at Q3 FY26.
+
+**What the TTM chart actually defends.** Worth recording the full defense here since it's the kind of thing a live interview would probe. Each plotted point is one fiscal quarter on the x-axis, but its *value* is the sum of that quarter and the three before it, a sliding twelve-month window, not a running total and nothing monthly. Independently recomputed all eight plotted points from `segment_data.csv` and they match `dim_date[ttm_printing_revenue]` exactly:
+
+| Quarter | Window | TTM value |
+|---|---|---|
+| Q4 FY24 | Q1-Q4 FY24 | 17,356 |
+| Q1 FY25 | Q2 FY24-Q1 FY25 | 17,261 |
+| Q2 FY25 | Q3 FY24-Q2 FY25 | 17,089 |
+| Q3 FY25 | Q4 FY24-Q3 FY25 | 16,941 |
+| Q4 FY25 | Q1-Q4 FY25 | 16,764 |
+| Q1 FY26 | Q2 FY25-Q1 FY26 | 16,671 |
+| Q2 FY26 | Q3 FY25-Q2 FY26 | 16,669 |
+| Q3 FY26 | Q4 FY25-Q3 FY26 | 16,579 |
+
+Exactly eight points, not eleven, because the dataset starts Q1 FY24 and a twelve-month window needs four quarters of history behind it. Q1-Q3 FY24 are filtered out of the chart deliberately (confirmed in the visual's own filter) rather than plotted as misleading partial windows, the same "genuine incomplete window" judgment call already made in `spreadsheet_notes.md` for the `derived` tab this data was copied from. First point to last: 17,356 down to 16,579, a decline of 777, or -4.5%, the same figure already on the deck. The reason TTM exists at all: HP's Q4 is always its strongest quarter and Q1 always its weakest, so raw quarterly Printing revenue swings every year regardless of underlying trend, and a trailing twelve-month window always contains exactly one of each fiscal quarter, so that seasonal swing cancels out and what's left is trend.
+
+### Region & Segment Overview: the bookmark toggle
+
+Two blocks (Region: absolute stacked column plus a percentage line; Segment: the same shape) occupy the same screen position, switched with what reads as a single button. Built as two bookmarks (`Regions view`, `Segments view`; Data suppressed, so only visibility toggles, never filter state) plus two buttons stacked in the same position, each visible only in its own bookmark's state and pointing at the other. Verified directly in the saved bookmark JSON: the two bookmarks' visibility flags for all six visuals are exact complements of each other, region visuals and the region button visible in one, hidden in the other, and vice versa.
+
+**The two DAX ratio measures did not work, and the cause was never found.** `Region % of Total` and `Segment % of Total` were drafted per `docs/dax_measures.md` Measures 6 and 7 (the `ALL()` versus named-row-override pair). Built, then debugged at length: confirmed via a test table that the base measures (`Regional Revenue`, `Net Revenue`) sliced correctly by region and business unit on their own, but every ratio measure built on top, including brand new self-contained versions with no dependency on other measures, returned the same constant for every category (a flat 1.0, and separately a flat 65.33% and a flat 3.00, each of which turned out to be the correct value for the *unfiltered, all-quarters* aggregate, meaning the quarter and category filters were reaching the base measures but not the ratio wrapper around them). Never identified why. Time-boxed, and reverted: both percentage charts on this page read the original `dim_date` precomputed share columns (`ps_share_of_total_pct` / `printing_share_of_total_pct`, `americas_share_of_total` / `emea_share_of_total` / `apj_share_of_total`) instead, confirmed correct against source already in the first pass above. The two absolute charts on this same page were switched to read `_Measures[Regional Revenue]` and `_Measures[Net Revenue]` respectively (confirmed in the saved file), so DAX is genuinely in use here, just not in the ratio form originally planned.
+
+Worth recording as honestly as every other bug in this file: a DAX approach was tried, hit a wall that survived several rounds of hypothesis and fix, and got abandoned in favour of the version that was already known to work, under real time pressure ahead of the interview. That is itself a defensible interview answer.
+
+### Printing Overview: kept simple, then narrowed once
+
+Two visuals. The Printing sub-units stacked column now reads `_Measures[Net Revenue]` (rather than a raw `SUM`) with `Series = business_unit` and a visual filter restricted to the three leaf units, `Supplies`, `Commercial Printing`, `Consumer Printing`, confirmed in the saved filter JSON. Since `Net Revenue` already pins `metric = "net_revenue"` and `reporting_basis = "FY26 realigned"` internally, the visual only needs to add the leaf-unit restriction on top, one column chart, one measure, one filter, rather than three separate composed measures. Confirmed at Q3 FY26: Supplies 2,536, Commercial Printing 1,101, Consumer Printing 275, summing to 3,912, the verified Printing total.
+
+The Y/Y line chart (Supplies, Commercial Printing, Consumer Printing growth) carries data labels on the Consumer Printing series only, a deliberate final narrowing: Consumer Printing is the closest this dataset gets to Home Print, the category this whole project is practice for, and singling it out on the one growth chart is the last "so what" move rather than adding a fourth visual.
+
+### Verification, 2026-09-02
+
+Read the finished `.pbix`'s PBIR JSON directly: confirmed page count and names, confirmed both bookmarks' visibility states are exact complements, confirmed which visuals bind to DAX measures versus raw columns versus `dim_date` precomputed values, confirmed the operating margin card's measure and format, confirmed the Printing Overview filter is scoped to exactly the three leaf units. Independently recomputed the TTM series, the Q3 FY26 leaf-unit split, and the regional/segment percentages from the CSVs to confirm the numbers the report shows are the numbers the source supports.
