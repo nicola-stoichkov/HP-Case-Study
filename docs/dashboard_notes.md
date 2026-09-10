@@ -2,7 +2,7 @@
 
 Notes on the Looker Studio build (D2), the two dimension tables that support it (D1), and the Power BI rebuild (D3).
 
-Live report: `dashboards/looker_studio_export.pdf` is a point-in-time export from 2026-08-31. Not yet linked live, since the report is still being edited; a live share link gets added here once it's in a state worth sharing.
+Live report: `dashboards/looker_studio_export.pdf` is a point-in-time export, last refreshed 2026-09-10 (legend order fixed on the Personal Systems/Printing and business unit charts, and a proper title added to what was previously an unlabelled combo chart; underlying figures unchanged). Not yet linked live, since the report is still being edited; a live share link gets added here once it's in a state worth sharing.
 
 ---
 
