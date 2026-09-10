@@ -1,0 +1,397 @@
+<title>Method, Not Just the Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ink:        #0A0A0A;
+    --ink-soft:   #333333;
+    --muted:      #6B6F76;
+    --ground:     #FFFFFF;
+    --surface:    #FFFFFF;
+    --panel:      #F4F5F7;
+    --rule:       #DADEE3;
+    --accent:     #0249D6;
+    --accent-soft:#E8EFFD;
+    --accent-dark:#01256B;
+    --slate:      #0249D6;
+    --slate-soft: #E8EFFD;
+
+    --dark-bg:    #FFFFFF;
+    --dark-panel: #F4F5F7;
+    --dark-ink:   #0A0A0A;
+    --dark-muted: #6B6F76;
+    --dark-accent:#0249D6;
+    --dark-rule:  #DADEE3;
+
+    --display: "Poppins", "Helvetica Neue", Arial, sans-serif;
+    --body: "Poppins", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--dark-bg);
+    font-family: var(--body);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  section.slide {
+    position: relative;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    padding: 4.2vw 6vw;
+    overflow: hidden;
+  }
+
+  section.dark { background: var(--dark-bg); color: var(--dark-ink); }
+  section.light { background: var(--ground); color: var(--ink); }
+
+  .kicker {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+
+  h1.title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  h2.slide-title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.7rem, 2.7vw, 2.4rem);
+    line-height: 1.14;
+    letter-spacing: -0.005em;
+    margin: 0 0 1.6rem;
+    max-width: 36ch;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 1.4rem 0 0;
+  }
+  .standfirst.tight { font-size: 1rem; max-width: 58ch; margin: 0 0 1.6rem; }
+
+  .byline {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    margin-top: auto;
+    padding-top: 2rem;
+    display: flex;
+    gap: 0.6em;
+    flex-wrap: wrap;
+  }
+  .byline .sep { opacity: 0.4; }
+
+  .corner-mark {
+    position: absolute;
+    top: 0;
+    right: 9vw;
+    width: min(7vw, 84px);
+    height: min(22vh, 150px);
+    background: var(--accent);
+    transform: skewX(-18deg);
+    transform-origin: top;
+    pointer-events: none;
+  }
+  .page-num {
+    position: absolute;
+    right: 6vw;
+    bottom: 2.4vw;
+    font-family: var(--body);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .content-body { flex: 1; display: flex; flex-direction: column; }
+
+  .row { display: grid; gap: 2.6rem; align-items: start; }
+  .row.two { grid-template-columns: 1fr 1fr; }
+
+  .stat-stack { display: flex; flex-direction: column; gap: 1.5rem; }
+  .stat-card {
+    background: var(--surface);
+    border: none;
+    border-left: 3px solid var(--accent);
+    border-bottom: 1px dotted var(--rule);
+    border-radius: 0;
+    padding: 0.4rem 0 1.1rem 1.4rem;
+  }
+  .stat-stack .stat-card:last-child { border-bottom: none; }
+  .stat-num {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    color: var(--accent);
+    line-height: 1.15;
+  }
+  .stat-label { font-size: 0.9rem; line-height: 1.5; color: var(--ink-soft); margin-top: 0.5rem; }
+
+  .callout {
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 1.1rem 1.4rem;
+    font-size: 0.94rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-top: 1.4rem;
+  }
+  .callout strong { color: var(--ink); }
+  .callout.limit { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+
+  .method-list { display: flex; flex-direction: column; gap: 0.7rem; max-width: 50rem; }
+  .method-row { display: grid; grid-template-columns: 44px 1fr; gap: 1.1rem; align-items: start; }
+  .method-dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--panel);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 600; font-size: 0.85rem; color: var(--accent);
+    flex: none;
+  }
+  .method-row h4 { font-family: var(--body); font-weight: 600; font-size: 1.04rem; margin: 0.1rem 0 0.3rem; color: var(--ink); }
+  .method-row p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--ink-soft); }
+
+  .stat-band { display: flex; gap: 2.6rem; margin-top: 1.1rem; flex-wrap: wrap; }
+  .stat-band div { display: flex; flex-direction: column; }
+  .stat-band .n { font-family: var(--mono); font-weight: 600; font-size: 1.5rem; color: var(--ink); }
+  .stat-band .l { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; max-width: 22ch; }
+
+  .obs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem 2.2rem; }
+  .obs-card { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 1.3rem 1.5rem; }
+  .obs-tag {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--slate); margin-bottom: 0.5rem; display: block;
+  }
+  .obs-card p { margin: 0; font-size: 0.94rem; line-height: 1.5; color: var(--ink-soft); }
+  .obs-card p strong { color: var(--ink); }
+  .obs-card.wide { grid-column: 1 / -1; }
+
+  a { color: inherit; }
+  .src { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-top: auto; padding-top: 1.4rem; }
+
+  nav.rail {
+    position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 12px; z-index: 20;
+  }
+  nav.rail a {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(2,73,214,0.25); display: block;
+    transition: background 0.2s, transform 0.2s;
+  }
+  nav.rail a.active { background: var(--accent); transform: scale(1.35); }
+
+  @media screen and (max-width: 820px) {
+    .row.two { grid-template-columns: 1fr; }
+    .obs-grid { grid-template-columns: 1fr; }
+    nav.rail { display: none; }
+    section.slide { padding: 8vw 6vw; }
+  }
+  @media print {
+    @page { size: 960pt 540pt; margin: 0; }
+    html { scroll-snap-type: none; }
+    nav.rail { display: none; }
+    section.slide { min-height: 540pt; height: 540pt; width: 960pt; padding: 30pt 44pt; page-break-after: always; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    nav.rail a { transition: none; }
+  }
+</style>
+
+<nav class="rail" id="rail">
+  <a href="#p1" class="active" data-i="0"></a>
+  <a href="#p2" data-i="1"></a>
+  <a href="#p3" data-i="2"></a>
+  <a href="#p4" data-i="3"></a>
+  <a href="#p5" data-i="4"></a>
+  <a href="#p6" data-i="5"></a>
+</nav>
+
+<!-- ============ SLIDE 1 : TITLE ============ -->
+<section class="slide dark" id="p1">
+  <div class="corner-mark" aria-hidden="true"></div>
+  <div class="kicker">Companion piece &middot; not a second pitch</div>
+  <h1 class="title">Method, not<br>just the model</h1>
+  <p class="standfirst">The same project, from the other side. Not what the data shows, but how a validated dataset, two dashboards, and two decks actually got made, including where AI helped, where it didn't, and where it got overruled.</p>
+  <div class="byline">
+    <span>Nicola Stoichkov</span><span class="sep">/</span>
+    <span>Companion to the Printing Segment Briefing</span><span class="sep">/</span>
+    <span>September 2026</span>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 : WHAT AI WAS FOR ============ -->
+<section class="slide light" id="p2">
+  <div class="corner-mark" aria-hidden="true"></div>
+  <div class="page-num">2</div>
+  <div class="kicker">01 &middot; What AI actually did</div>
+  <h2 class="slide-title">Four jobs, each with a check on the other side</h2>
+  <div class="content-body">
+    <div class="method-list">
+      <div class="method-row">
+        <div class="method-dot">1</div>
+        <div>
+          <h4>Extraction</h4>
+          <p>Python scripts pulled figures from HP's press releases and SEC filings. Every number then got checked against the live source page by hand before it went into the dataset.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <div class="method-dot">2</div>
+        <div>
+          <h4>Structure</h4>
+          <p>Suggested the tab layout for the spreadsheet, the dimension tables for the dashboards, and the long-format shape that avoids double counting.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <div class="method-dot">3</div>
+        <div>
+          <h4>Metric ideas</h4>
+          <p>Flagged a few things worth computing, trailing twelve months and growth contribution decomposition, that turned out to be genuinely useful once tried.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <div class="method-dot">4</div>
+        <div>
+          <h4>Formula guidance, not formulas, mostly</h4>
+          <p>For every SUMIFS and XLOOKUP, AI explained the pattern in plain English and I typed it myself. Two honest exceptions: the trailing-twelve-month formula in Sheets is AI's own suggestion and execution, a rolling window I can explain but wouldn't yet write from scratch. And DAX overall, first time I'd used it. I knew of it going in, wanted to see how and why it's actually used, then started learning the basic CALCULATE pattern myself from there.</p>
+        </div>
+      </div>
+    </div>
+    <div class="stat-band">
+      <div><span class="n">2</span><span class="l">formulas AI wrote outright, the TTM formula and an early DAX measure while I was learning the pattern</span></div>
+      <div><span class="n">8 / 8</span><span class="l">validation checks, all independently checked against source</span></div>
+      <div><span class="n">2</span><span class="l">DAX measures that never worked, and got reverted on purpose</span></div>
+    </div>
+  </div>
+  <div class="src">Full account: docs/dax_measures.md and docs/dashboard_notes.md in the project repo</div>
+</section>
+
+<!-- ============ SLIDE 3 : TOOL CHOICE ============ -->
+<section class="slide light" id="p3">
+  <div class="corner-mark" aria-hidden="true"></div>
+  <div class="page-num">3</div>
+  <div class="kicker">02 &middot; Tool choice, on purpose</div>
+  <h2 class="slide-title">Started in the tool I know, then deliberately left it</h2>
+  <div class="content-body">
+    <div class="row two">
+      <div class="obs-card">
+        <span class="obs-tag">Looker Studio, built first</span>
+        <p>The dashboard tool I use daily at Momentum Data. Built the individual visuals first, mostly the ones AI suggested, then organised them into a broad-to-narrow drill-down myself, three scorecards down to business-unit detail. That structure is mine, not suggested, it's the same one I've used in academic writing, publications, my thesis, long before this project.</p>
+      </div>
+      <div class="obs-card">
+        <span class="obs-tag">Power BI, built second, on purpose</span>
+        <p>Rebuilt the same model in a tool I use less. New interface, first real use of Power Query and DAX in this project, and the two double-counting traps already solved once in Looker Studio had to be re-solved from scratch in a completely different tool.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>Same underlying model, two different tools.</strong> Rebuilding it twice was the point, not a shortcut taken once and reused. The traps stayed the same; how each tool needed to be told about them didn't.
+    </div>
+  </div>
+  <div class="src">Looker Studio export: dashboards/looker_studio_export.pdf &middot; Power BI: dashboards/power_bi_report.pbix</div>
+</section>
+
+<!-- ============ SLIDE 4 : POWER QUERY THEN DAX ============ -->
+<section class="slide light" id="p4">
+  <div class="corner-mark" aria-hidden="true"></div>
+  <div class="page-num">4</div>
+  <div class="kicker">03 &middot; Solved in Power Query</div>
+  <h2 class="slide-title">A sort-order problem that took three tries to actually fix</h2>
+  <div class="content-body">
+    <div class="row two">
+      <div class="stat-stack">
+        <div class="stat-card">
+          <div class="stat-num">Why Power Query, really</div>
+          <div class="stat-label">Wanted the region and business-unit stacked columns ordered a specific way, the same custom series sort Looker Studio supports natively. Power BI has no direct equivalent, so the first attempt was a DAX calculated column, a SWITCH-based sort order that hit a circular dependency: sorting a column by a column whose own formula reads that same column. AI suggested Power Query instead, computed at load time, before DAX's dependency graph even exists.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">One column, then two, then the real fix</div>
+          <div class="stat-label">Built one conditional column for Printing versus Personal Systems, then a second for Supplies, Commercial and Consumer Printing. Both read the same business_unit column, and Power BI only allows one sort-by-column mapping per column, so the two couldn't coexist. Noticed that myself, then fixed it by building a third column instead, one set of conditions covering all five business units at once, five conditions total, so a single sort order works correctly no matter which chart is filtering to which subset.</div>
+        </div>
+      </div>
+      <div class="callout limit">
+        <strong>What didn't work.</strong> Two ratio measures, built to show percent-of-total through filter-context override, never produced a correct result. Debugged at length, including versions with no dependency on any other measure. Root cause never identified. Time-boxed, and reverted to the version that was already correct rather than shipping something broken. That is a real answer to "what was hard here," not a gap to hide.
+      </div>
+    </div>
+  </div>
+  <div class="src">Full build log, including this one: docs/dashboard_notes.md &sect;6</div>
+</section>
+
+<!-- ============ SLIDE 5 : BOTH DECKS AS HTML ============ -->
+<section class="slide light" id="p5">
+  <div class="corner-mark" aria-hidden="true"></div>
+  <div class="page-num">5</div>
+  <div class="kicker">04 &middot; Both decks, the same way</div>
+  <h2 class="slide-title">Built as HTML, styled to match HP's own template, exported to PDF</h2>
+  <div class="content-body">
+    <div class="obs-grid">
+      <div class="obs-card">
+        <span class="obs-tag">Styled against a real reference</span>
+        <p>Rendered pages from HP's own Q4 FY25 earnings presentation, sampled the exact blue, the type treatment, and the diagonal corner motif, this deck and the analysis deck both use it. Not a generic template, HP's own visual language.</p>
+      </div>
+      <div class="obs-card">
+        <span class="obs-tag">Built and edited with AI</span>
+        <p>Every slide is plain HTML and CSS, drafted and revised with AI over several passes, real numbers checked against the same source files as the dashboards, then converted to PDF with a small HTML-to-PDF converter I built myself as a separate project.</p>
+      </div>
+    </div>
+  </div>
+  <div class="src">deck/printing_segment_briefing.html &middot; deck/project_method_briefing.html, this file</div>
+</section>
+
+<!-- ============ SLIDE 6 : CLOSE ============ -->
+<section class="slide dark" id="p6">
+  <div class="corner-mark" aria-hidden="true"></div>
+  <div class="page-num">6</div>
+  <div class="kicker">05 &middot; Why this exists</div>
+  <h2 class="slide-title" style="color: var(--dark-ink); max-width: 32ch;">Practice, not a claim to already know this business</h2>
+  <div class="content-body">
+    <p class="standfirst" style="color: var(--ink-soft);">Built to refresh Power BI skills, to show initiative ahead of this interview, and to have an honest answer ready for exactly the question this deck exists to answer: what did you actually do yourself, and what did the AI do. The analysis deck is the output. This one is the process behind it.</p>
+  </div>
+  <div class="byline"><span>Thank you</span><span class="sep">/</span><span>Nicola Stoichkov</span></div>
+</section>
+
+<script>
+(function(){
+  var dots = document.querySelectorAll('nav.rail a');
+  var sections = document.querySelectorAll('section.slide');
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) {
+        var idx = Array.prototype.indexOf.call(sections, e.target);
+        dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(function(s){ io.observe(s); });
+})();
+</script>
